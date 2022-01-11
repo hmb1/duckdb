@@ -1672,6 +1672,7 @@ typedef struct PGCreateFunctionStmt {
 	PGRangeVar *name;
 	PGList *params;
 	PGNode *function;
+  	PGNode *query;
 } PGCreateFunctionStmt;
 
 /* ----------------------
