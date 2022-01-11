@@ -1,3 +1,5 @@
+
+#include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/macro_catalog_entry.hpp"
 #include "duckdb/parser/expression/function_expression.hpp"
 #include "duckdb/parser/expression/subquery_expression.hpp"
@@ -16,21 +18,9 @@
 #include "duckdb/parser/expression/function_expression.hpp"
 #include "duckdb/parser/query_node/select_node.hpp"
 #include "duckdb/parser/tableref/joinref.hpp"
-#include "duckdb/planner/binder.hpp"
-#include "duckdb/planner/expression_binder/column_alias_binder.hpp"
-#include "duckdb/planner/expression_binder/constant_binder.hpp"
-#include "duckdb/planner/expression_binder/group_binder.hpp"
-#include "duckdb/planner/expression_binder/having_binder.hpp"
-#include "duckdb/planner/expression_binder/order_binder.hpp"
-#include "duckdb/planner/expression_binder/select_binder.hpp"
-#include "duckdb/planner/expression_binder/where_binder.hpp"
-#include "duckdb/planner/query_node/bound_select_node.hpp"
-#include "duckdb/planner/table_binding.hpp"
-#include "duckdb/planner/expression_binder/aggregate_binder.hpp"
 
-#include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/scalar_function_catalog_entry.hpp"
-
+#include "duckdb/planner/binder.hpp"
 
 namespace duckdb {
 
@@ -141,17 +131,15 @@ unique_ptr<QueryNode> BindMacroSelect(FunctionExpression &function, MacroCatalog
 }
 
 
+
 unique_ptr<QueryNode> Binder::BindNodeMacro(SelectNode &statement) {
 
 	/* we have already checked that th e first argument in the seelect list is in fact a select macro function
 	 *  but we can check again here */
 	if(statement.select_list.size() !=1 ||  statement.select_list[0]->type != ExpressionType::FUNCTION )
 		return nullptr;
-
 	auto &function = (FunctionExpression &)(*statement.select_list[0]);
-
 	QueryErrorContext error_context(root_statement, function.query_location);
-
 	auto &catalog = Catalog::GetCatalog(context);
 	auto func = catalog.GetEntry(context, CatalogType::SCALAR_FUNCTION_ENTRY, function.schema, function.function_name, false,error_context );
 	auto macro_func= (MacroCatalogEntry *)func;
