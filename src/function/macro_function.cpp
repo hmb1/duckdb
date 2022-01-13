@@ -10,18 +10,18 @@
 
 namespace duckdb {
 
-MacroFunction::MacroFunction(unique_ptr<ParsedExpression> expression) : expression(move(expression) ){
+MacroFunction::MacroFunction(unique_ptr<ParsedExpression> expression) : expression(move(expression)) {
 }
 
-MacroFunction::MacroFunction(void){
- }
+MacroFunction::MacroFunction(void) {
+}
 
- bool MacroFunction::is_query() {
-	 if(query_node)
-		 return true;
-	 else
-		 return false;
- }
+bool MacroFunction::is_query() {
+	if (query_node)
+		return true;
+	else
+		return false;
+}
 
 string MacroFunction::ValidateArguments(MacroCatalogEntry &macro_func, FunctionExpression &function_expr,
                                         vector<unique_ptr<ParsedExpression>> &positionals,
@@ -76,10 +76,9 @@ string MacroFunction::ValidateArguments(MacroCatalogEntry &macro_func, FunctionE
 unique_ptr<MacroFunction> MacroFunction::Copy() {
 	auto result = make_unique<MacroFunction>();
 
-	if(expression) {
+	if (expression) {
 		result->expression = expression->Copy();
-	}
-    else if(query_node) {
+	} else if (query_node) {
 		result->query_node = query_node->Copy();
 	}
 
