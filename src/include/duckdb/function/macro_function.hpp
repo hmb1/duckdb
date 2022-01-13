@@ -19,7 +19,6 @@ namespace duckdb {
 
 class MacroCatalogEntry;
 
-
 class MacroFunction {
 public:
 	explicit MacroFunction(unique_ptr<ParsedExpression> expression);
@@ -43,10 +42,8 @@ public:
 	//! The main query node
 	unique_ptr<QueryNode> query_node;
 
-
 public:
 	unique_ptr<MacroFunction> Copy();
-
 };
 
 } // namespace duckdb
