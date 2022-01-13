@@ -206,6 +206,8 @@ private:
 	BoundStatement Bind(SetStatement &stmt);
 	BoundStatement Bind(LoadStatement &stmt);
 
+	unique_ptr<QueryNode> BindNodeMacro(SelectNode &statement);
+	unique_ptr<QueryNode> BindNodeMacro(FunctionExpression &function);
 	unique_ptr<BoundQueryNode> BindNode(SelectNode &node);
 	unique_ptr<BoundQueryNode> BindNode(SetOperationNode &node);
 	unique_ptr<BoundQueryNode> BindNode(RecursiveCTENode &node);
@@ -224,6 +226,7 @@ private:
 	unique_ptr<BoundTableRef> Bind(TableFunctionRef &ref);
 	unique_ptr<BoundTableRef> Bind(EmptyTableRef &ref);
 	unique_ptr<BoundTableRef> Bind(ExpressionListRef &ref);
+	unique_ptr<BoundSubqueryRef> BindNode(TableFunctionRef &ref, FunctionExpression & fexpr);
 
 	bool BindFunctionParameters(vector<unique_ptr<ParsedExpression>> &expressions, vector<LogicalType> &arguments,
 	                            vector<Value> &parameters, named_parameter_map_t &named_parameters,
