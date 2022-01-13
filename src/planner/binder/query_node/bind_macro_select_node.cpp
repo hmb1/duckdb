@@ -144,7 +144,7 @@ unique_ptr<QueryNode> Binder::BindNodeMacro(SelectNode &statement) {
 	D_ASSERT(func->type == CatalogType::MACRO_ENTRY);
 
 	// check if a standard macro is being used as a select macro
-	if (!macro_func->function->is_query())
+	if (!macro_func->function->isQuery())
 		throw Exception(StringUtil::Format("Macro %s is being used in the wrong context as a Select Macro\n",
 		                                   function.function_name));
 

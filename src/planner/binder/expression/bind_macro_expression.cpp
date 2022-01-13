@@ -46,7 +46,7 @@ BindResult ExpressionBinder::BindMacro(FunctionExpression &function, MacroCatalo
 	vector<unique_ptr<ParsedExpression>> positionals;
 	unordered_map<string, unique_ptr<ParsedExpression>> defaults;
 
-	if (macro_func->function->is_query()) {
+	if (macro_func->function->isQuery()) {
 		auto error = StringUtil::Format("Select Macro %s is being used in the wrong context as a regular macro\n Try "
 		                                "running again with the command SELECT FUNCTION %s\n",
 		                                function.function_name, function.ToString());

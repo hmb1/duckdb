@@ -23,8 +23,8 @@ void MacroCatalogEntry::Serialize(Serializer &serializer) {
 		serializer.WriteString(kv.first);
 		kv.second->Serialize(serializer);
 	}
-	serializer.Write<bool>(function->is_query() ? true : false);
-	if (function->is_query())
+	serializer.Write<bool>(function->isQuery() ? true : false);
+	if (function->isQuery())
 		function->query_node->Serialize(serializer);
 	else
 		function->expression->Serialize(serializer);
