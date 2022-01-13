@@ -85,16 +85,31 @@ unique_ptr<BoundTableRef> Binder::Bind(TableFunctionRef &ref) {
 
 	auto function = catalog.GetEntry<TableFunctionCatalogEntry>(context, fexpr->schema, fexpr->function_name, true, error_context);
 
-	// Since Table Functions and Select  Macros are invoked the same way - the only way to differenciate between them is by loooking in the Catalogs.
+	// Since Table Functions and Select  Macros are invoked the same way - the only way to differenciate between them is by looking in the Catalogs.
 	// So for now Select Macros lives here
      if(!function)
 	 {
-		 /* try the SCALAR_FUNCTION ENTRY Caalog - will throw if not present here */
+		 // try the SCALAR_FUNCTION ENTRY Catalog - will throw if not present here
 		 auto macro_func =  (MacroCatalogEntry *)catalog.GetEntry(context, CatalogType::SCALAR_FUNCTION_ENTRY, fexpr->schema, fexpr->function_name, false, error_context);
+		 auto query_node= BindMacroSelect(*fexpr, macro_func,0);
+		 D_ASSERT(query_node);
+		 //auto  sref= unique_ptr<SubqueryRef>();
+		 //sref->column_name_alias=ref.column_name_alias;
+		 auto binder = Binder::CreateBinder(context, this);
+		 binder->can_contain_nulls = true;
 
-		 // So we have a Table function in a FROM clause */
-         //auto query_node= Binder::BindNodeMacro(*fexpr);
-         return Binder::BindNode( ref, *fexpr);
+		 binder->alias = ref.alias.empty() ? "unnamed_query" : ref.alias;
+		 //std::cout<<"Binder::BindNode(ref,fexpr) about to do query bind\n";
+		 auto query = binder->BindNode(  *query_node);
+		 //std::cout<<"Binder::BindNode(ref,fexpr) done query bind\n";
+		 idx_t bind_index = query->GetRootIndex();
+		 //string alias;
+		 string alias = (ref.alias.empty() ? "unnamed_query" + to_string(bind_index) : ref.alias);
+
+		 auto result = make_unique<BoundSubqueryRef>(move(binder), move(query));
+		 bind_context.AddSubquery(bind_index, alias, (SubqueryRef &)ref, *result->subquery);
+		 MoveCorrelatedExpressions(*result->binder);
+		 return move(result);
 
 	 }
 
@@ -164,39 +179,5 @@ unique_ptr<BoundTableRef> Binder::Bind(TableFunctionRef &ref) {
 
 	return make_unique_base<BoundTableRef, BoundTableFunction>(move(get));
 }
-
-unique_ptr<BoundSubqueryRef> Binder::BindNode(TableFunctionRef &ref, FunctionExpression &fexpr)
-{
-     auto query_node= BindNodeMacro(fexpr);
-	 D_ASSERT(query_node);
-	 //auto  sref= unique_ptr<SubqueryRef>();
-	 //sref->column_name_alias=ref.column_name_alias;
-	 auto binder = Binder::CreateBinder(context, this);
-	 binder->can_contain_nulls = true;
-
-	 binder->alias = ref.alias.empty() ? "unnamed_subquery" : ref.alias;
-	 //std::cout<<"Binder::BindNode(ref,fexpr) about to do query bind\n";
-	 auto query = binder->BindNode(  *query_node);
-	 //std::cout<<"Binder::BindNode(ref,fexpr) done query bind\n";
-	 idx_t bind_index = query->GetRootIndex();
-
-	 //string alias;
-	 string alias = (ref.alias.empty() ? "unnamed_subquery" + to_string(bind_index) : ref.alias);
-
-	 auto result = make_unique<BoundSubqueryRef>(move(binder), move(query));
-	 bind_context.AddSubquery(bind_index, alias, (SubqueryRef &) ref, *result->subquery);
-	 MoveCorrelatedExpressions(*result->binder);
-	 return move(result);
-
-
-
-
-
-
-
-
-
-}
-
 
 } // namespace duckdb
