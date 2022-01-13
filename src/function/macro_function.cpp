@@ -16,7 +16,7 @@ MacroFunction::MacroFunction(unique_ptr<ParsedExpression> expression) : expressi
 MacroFunction::MacroFunction(void) {
 }
 
-bool MacroFunction::is_query() {
+bool MacroFunction::isQuery() {
 	if (query_node)
 		return true;
 	else
