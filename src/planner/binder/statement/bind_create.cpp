@@ -108,35 +108,10 @@ void Binder::BindCreateViewInfo(CreateViewInfo &base) {
 
 	    if(is_query)
 	    {
-
+		    // nb use a Copy as node can be modified
             unique_ptr<QueryNode> node=base.function->query_node->Copy();
 		    // not interested in the result just wish to know if can bind
-		    // nb use a Copy as node can be modified
 		    auto result=BindNode(*node);
-            /*
-		    string error;
-		    auto sel_node = make_unique<BoundSelectNode>();
-		    auto group_info = make_unique<BoundGroupInformation>();
-            // if it doesn't crash out then it parses and binds
-		    switch ( node->type){
-		    	case SELECT_NODE:
-			        BindNode((SelectNode &) (*node) );
-			      	break;
-
-		        case SET_OPERATION_NODE:
-			         BindNode( (SetOperationNode&) (*node));
-                     break;
-
-		        case  BOUND_SUBQUERY_NODE:
-			          //BindNode( (SubqueryExpression&) (*node));
-			          break;
-
-		        case  RECURSIVE_CTE_NODE:
-			        BindNode( (RecursiveCTENode&) (*node));
-			           break;
-
-		        }
-                */
 	    }
 	    else
 	    {
