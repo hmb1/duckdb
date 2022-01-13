@@ -207,7 +207,8 @@ private:
 	BoundStatement Bind(LoadStatement &stmt);
 
 	unique_ptr<QueryNode> BindNodeMacro(SelectNode &statement);
-	unique_ptr<QueryNode> BindNodeMacro(FunctionExpression &function);
+	unique_ptr<QueryNode> BindMacroSelect(FunctionExpression &function, MacroCatalogEntry *macro_func, idx_t depth);
+
 	unique_ptr<BoundQueryNode> BindNode(SelectNode &node);
 	unique_ptr<BoundQueryNode> BindNode(SetOperationNode &node);
 	unique_ptr<BoundQueryNode> BindNode(RecursiveCTENode &node);
