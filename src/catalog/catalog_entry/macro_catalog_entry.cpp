@@ -23,16 +23,15 @@ void MacroCatalogEntry::Serialize(Serializer &serializer) {
 		serializer.WriteString(kv.first);
 		kv.second->Serialize(serializer);
 	}
-	serializer.Write<bool>(function->is_query() ? true : false );
-	if(function->is_query())
+	serializer.Write<bool>(function->is_query() ? true : false);
+	if (function->is_query())
 		function->query_node->Serialize(serializer);
 	else
 		function->expression->Serialize(serializer);
-
 }
 
 unique_ptr<CreateMacroInfo> MacroCatalogEntry::Deserialize(Deserializer &source) {
-	bool is_query=false;
+	bool is_query = false;
 	auto info = make_unique<CreateMacroInfo>();
 	info->schema = source.Read<string>();
 	info->name = source.Read<string>();
@@ -49,10 +48,10 @@ unique_ptr<CreateMacroInfo> MacroCatalogEntry::Deserialize(Deserializer &source)
 	}
 
 	is_query = source.Read<bool>();
-	if(is_query)
+	if (is_query)
 		info->function->query_node = unique_ptr<QueryNode>(QueryNode::Deserialize(source));
 	else
-		info->function->expression= unique_ptr<ParsedExpression>(ParsedExpression::Deserialize(source));
+		info->function->expression = unique_ptr<ParsedExpression>(ParsedExpression::Deserialize(source));
 	return info;
 }
 
