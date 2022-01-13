@@ -152,8 +152,33 @@ unique_ptr<QueryNode> Binder::BindNodeMacro(SelectNode &statement) {
 
 
 	auto query_node_new= BindMacroSelect(function,macro_func,10);
-
+	D_ASSERT(query_node_new);
 	return query_node_new;
+
+    }
+
+    unique_ptr<QueryNode> Binder::BindNodeMacro(FunctionExpression &function) {
+
+	    /* we have already checked that th e first argument in the seelect list is in fact a select macro function
+	 *  but we can check again here */
+	    QueryErrorContext error_context(root_statement, function.query_location);
+	    auto &catalog = Catalog::GetCatalog(context);
+	    auto func = catalog.GetEntry(context, CatalogType::SCALAR_FUNCTION_ENTRY, function.schema, function.function_name, false,error_context );
+	    auto macro_func= (MacroCatalogEntry *)func;
+
+	    D_ASSERT(func->type == CatalogType::MACRO_ENTRY);
+
+	    // check if a standard macro is being used as a select macro
+	    if(!macro_func->function->is_query())
+		    throw Exception(StringUtil::Format("Macro %s is being used in the wrong context as a Select Macro\n",function.function_name));
+
+
+	    auto query_node_new= BindMacroSelect(function,macro_func,10);
+	    auto &select_node = (SelectNode &)(*query_node_new);
+
+	    D_ASSERT ( !select_node.select_list.empty() && select_node.from_table != nullptr);
+
+	    return query_node_new;
 
     }
 

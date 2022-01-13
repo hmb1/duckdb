@@ -110,7 +110,10 @@ void Binder::BindCreateViewInfo(CreateViewInfo &base) {
 	    {
 
             unique_ptr<QueryNode> node=base.function->query_node->Copy();
-
+		    // not interested in the result just wish to know if can bind
+		    // nb use a Copy as node can be modified
+		    auto result=BindNode(*node);
+            /*
 		    string error;
 		    auto sel_node = make_unique<BoundSelectNode>();
 		    auto group_info = make_unique<BoundGroupInformation>();
@@ -133,7 +136,7 @@ void Binder::BindCreateViewInfo(CreateViewInfo &base) {
 			           break;
 
 		        }
-
+                */
 	    }
 	    else
 	    {
