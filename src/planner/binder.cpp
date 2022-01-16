@@ -1,4 +1,3 @@
-#include <iostream>
 #include "duckdb/planner/binder.hpp"
 
 #include "duckdb/parser/statement/list.hpp"
