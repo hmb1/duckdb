@@ -7,6 +7,7 @@ add_library_unity(
   expressionlistref.cpp
   joinref.cpp
   subqueryref.cpp
+  tablemacroref.cpp
   table_function.cpp)
 set(ALL_OBJECT_FILES
     ${ALL_OBJECT_FILES} $<TARGET_OBJECTS:duckdb_parser_tableref>

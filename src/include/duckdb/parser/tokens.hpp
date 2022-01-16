@@ -86,6 +86,7 @@ class CrossProductRef;
 class JoinRef;
 class SubqueryRef;
 class TableFunctionRef;
+class TableMacroRef;
 class EmptyTableRef;
 class ExpressionListRef;
 
