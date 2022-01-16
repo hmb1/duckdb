@@ -24,8 +24,8 @@
 
 namespace duckdb {
 
-// unique_ptr<QueryNode>BindMacroSelect(FunctionExpression &function, MacroCatalogEntry *macro_func, idx_t depth);
-void ReplaceMacroSelectParametersRecursive(unique_ptr<ParsedExpression> &expr, MacroBinding *macro_binding);
+
+//void ReplaceMacroSelectParametersRecursive(unique_ptr<ParsedExpression> &expr, MacroBinding *macro_binding);
 
 void ReplaceMacroSelectParametersRecursive(unique_ptr<ParsedExpression> &expr, MacroBinding *macro_binding) {
 	switch (expr->GetExpressionClass()) {
@@ -79,7 +79,7 @@ unique_ptr<QueryNode> Binder::BindMacroSelect(FunctionExpression &function, Macr
 	if (!error.empty()) {
 		// cannot use error below as binder rnot in scope
 		// return BindResult(binder. FormatError(*expr->get(), error));
-		throw Exception(error);
+		throw BinderException(FormatError(function,error));
 	}
 
 	// create a MacroBinding to bind this macro's parameters to its arguments
@@ -112,10 +112,10 @@ unique_ptr<QueryNode> Binder::BindMacroSelect(FunctionExpression &function, Macr
 	/* from_table_ref/TABLE_FUNCTION   Does this need to be parsed ?*/
 	// if (select_node.from_table && select_node.from_table->type == TableReferenceType::TABLE_FUNCTION ) {; }
 
-	if (select_node.where_clause) // where clause
+	if ( select_node.where_clause ) // where clause
 		ReplaceMacroSelectParametersRecursive(select_node.where_clause, macro_binding);
 
-	if (select_node.groups.group_expressions.size() > 0)
+	if (!select_node.groups.group_expressions.empty())
 		for (auto &group_element : select_node.groups.group_expressions)
 			ReplaceMacroSelectParametersRecursive(group_element, macro_binding);
 
@@ -132,7 +132,7 @@ unique_ptr<QueryNode> Binder::BindNodeMacro(SelectNode &statement) {
 
 	/* we have already checked that th e first argument in the seelect list is in fact a select macro function
 	 *  but we can check again here */
-	if (statement.select_list.size() != 1 || statement.select_list[0]->type != ExpressionType::FUNCTION)
+	if ( !statement.select_list.size() ||  statement.select_list[0]->type != ExpressionType::FUNCTION)
 		return nullptr;
 	auto &function = (FunctionExpression &)(*statement.select_list[0]);
 	QueryErrorContext error_context(root_statement, function.query_location);

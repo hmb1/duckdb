@@ -47,8 +47,8 @@ BindResult ExpressionBinder::BindMacro(FunctionExpression &function, MacroCatalo
 	unordered_map<string, unique_ptr<ParsedExpression>> defaults;
 
 	if (macro_func->function->isQuery()) {
-		auto error = StringUtil::Format("Select Macro %s is being used in the wrong context as a regular macro\n Try "
-		                                "running again with the command SELECT FUNCTION %s\n",
+		auto error = StringUtil::Format("Table Macro %s is being used in the wrong context as a regular macro\n Try "
+		                                "running again with the command SELECT * FROM %s\n",
 		                                function.function_name, function.ToString());
 		return BindResult(binder.FormatError(*expr->get(), error));
 	}

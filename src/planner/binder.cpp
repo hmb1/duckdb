@@ -1,3 +1,4 @@
+#include <iostream>
 #include "duckdb/planner/binder.hpp"
 
 #include "duckdb/parser/statement/list.hpp"
@@ -10,6 +11,9 @@
 #include "duckdb/catalog/catalog_entry/table_catalog_entry.hpp"
 
 #include <algorithm>
+
+#include "duckdb/parser/tableref/table_function_ref.hpp"
+#include "duckdb/parser/tableref/tablemacroref.hpp"
 
 namespace duckdb {
 
@@ -127,6 +131,7 @@ unique_ptr<LogicalOperator> Binder::CreatePlan(BoundQueryNode &node) {
 
 unique_ptr<BoundTableRef> Binder::Bind(TableRef &ref) {
 	unique_ptr<BoundTableRef> result;
+	unique_ptr<TableRef> sref();
 	switch (ref.type) {
 	case TableReferenceType::BASE_TABLE:
 		result = Bind((BaseTableRef &)ref);
@@ -143,9 +148,18 @@ unique_ptr<BoundTableRef> Binder::Bind(TableRef &ref) {
 	case TableReferenceType::EMPTY:
 		result = Bind((EmptyTableRef &)ref);
 		break;
-	case TableReferenceType::TABLE_FUNCTION:
+	case TableReferenceType::TABLE_FUNCTION: {
+		// table function now returns null_ptr if ref->function_name not in TableFunction Catalog
+		// function can modify ref so we make a copy of it here
+		auto tf_ref =ref.Copy();
 		result = Bind((TableFunctionRef &)ref);
+		//  no result from
+		if (!result)
+			// This returns a <BoundSubqueryNode> if sucessfull
+			result=Bind( (TableMacroRef &)*tf_ref);
+		}
 		break;
+
 	case TableReferenceType::EXPRESSION_LIST:
 		result = Bind((ExpressionListRef &)ref);
 		break;
