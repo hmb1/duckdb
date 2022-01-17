@@ -12,7 +12,6 @@
 #include <algorithm>
 
 #include "duckdb/parser/tableref/table_function_ref.hpp"
-#include "duckdb/parser/tableref/tablemacroref.hpp"
 
 namespace duckdb {
 
@@ -148,19 +147,17 @@ unique_ptr<BoundTableRef> Binder::Bind(TableRef &ref) {
 		break;
 	case TableReferenceType::TABLE_FUNCTION: {
 
-		     auto cp_ref= ref.Copy();
-		     result = Bind((TableFunctionRef &)ref);
+		// We need a copy in case Bind((TableFunctionRef ) return a null
+		// and modifies some of reference
+		auto cp_ref = ref.Copy();
+		result = Bind((TableFunctionRef &)ref);
 
-		     if (!result) {
-			     // this a little naughty but TableFunctionRef and TableMacrRef are the same
-			     // Also  note Bind((TableMacroRef &)) return a BoundSubquery
-			     result = Bind((TableMacroRef &)*cp_ref);
-		     }
+		if (!result) {
+			// Also  note BindToMacro((TableMacroRef &)) return a BoundSubquery
+			result = BindToMacro((TableFunctionRef &)*cp_ref);
+		}
 
-
-
-			}
-	         break;
+	} break;
 
 	case TableReferenceType::EXPRESSION_LIST:
 		result = Bind((ExpressionListRef &)ref);

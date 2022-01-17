@@ -14,7 +14,6 @@
 #include "duckdb/common/algorithm.hpp"
 #include "duckdb/parser/expression/subquery_expression.hpp"
 #include "duckdb/catalog/catalog_entry/macro_catalog_entry.hpp"
-#include "duckdb/parser/tableref/tablemacroref.hpp"
 
 namespace duckdb {
 
@@ -155,7 +154,7 @@ unique_ptr<BoundTableRef> Binder::Bind(TableFunctionRef &ref) {
 	return make_unique_base<BoundTableRef, BoundTableFunction>(move(get));
 }
 
-unique_ptr<BoundTableRef> Binder::Bind(TableMacroRef &ref) {
+unique_ptr<BoundTableRef> Binder::BindToMacro(TableFunctionRef &ref) {
 	QueryErrorContext error_context(root_statement, ref.query_location);
 
 	D_ASSERT(ref.function->type == ExpressionType::FUNCTION);
