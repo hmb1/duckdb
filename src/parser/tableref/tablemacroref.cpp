@@ -1,8 +1,40 @@
-#include "duckdb/parser/tableref/tablemacroref.hpp"
+
 #include "duckdb/common/vector.hpp"
 #include "duckdb/common/serializer.hpp"
+#include "duckdb/common/serializer.hpp"
+#include "duckdb/parser/tableref/table_function_ref.hpp"
+#include "duckdb/parser/tableref/tablemacroref.hpp"
 
 namespace duckdb {
+
+TableMacroRef::TableMacroRef(): TableRef(TableReferenceType::TABLE_MACRO) {;
+}
+
+TableMacroRef::TableMacroRef(unique_ptr<ParsedExpression> function_p, vector<string> column_name_alias_p, string alias, unique_ptr<SampleOptions> sample_p, id_t query_location_p  )
+    : TableRef(TableReferenceType::TABLE_MACRO) , function( move(function_p)), column_name_alias(column_name_alias_p) {
+
+	this->alias=alias;
+
+	if (sample_p) {
+		this->sample=move(sample_p);
+	}
+	this->query_location=query_location_p;
+
+}
+
+TableMacroRef::TableMacroRef(unique_ptr<ParsedExpression> function_p, vector<string> column_name_alias_p)
+    : TableRef(TableReferenceType::TABLE_MACRO) {
+}
+
+
+TableMacroRef::TableMacroRef( TableRef &ref  ) : TableRef(TableReferenceType::TABLE_MACRO) {
+	this->alias = ref.alias;
+	this->query_location = ref.query_location;
+	this->sample = ref.sample ? ref.sample->Copy() : nullptr;
+}
+
+
+
 
 string TableMacroRef::ToString() const {
 	return function->ToString();
