@@ -225,7 +225,7 @@ private:
 	unique_ptr<BoundTableRef> Bind(JoinRef &ref);
 	unique_ptr<BoundTableRef> Bind(SubqueryRef &ref, CommonTableExpressionInfo *cte = nullptr);
 	unique_ptr<BoundTableRef> Bind(TableFunctionRef &ref);
-	unique_ptr<BoundTableRef> Bind(TableMacroRef &ref);
+	unique_ptr<BoundTableRef> BindToMacro(TableFunctionRef &ref);
 	unique_ptr<BoundTableRef> Bind(EmptyTableRef &ref);
 	unique_ptr<BoundTableRef> Bind(ExpressionListRef &ref);
 

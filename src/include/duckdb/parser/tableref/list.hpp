@@ -5,4 +5,3 @@
 #include "duckdb/parser/tableref/joinref.hpp"
 #include "duckdb/parser/tableref/subqueryref.hpp"
 #include "duckdb/parser/tableref/table_function_ref.hpp"
-#include "duckdb/parser/tableref/tablemacroref.hpp"
