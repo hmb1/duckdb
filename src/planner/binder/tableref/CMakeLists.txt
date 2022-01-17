@@ -8,7 +8,6 @@ add_library_unity(
   bind_joinref.cpp
   bind_subqueryref.cpp
   bind_table_function.cpp
-  # bind_tablemacroref.cpp
   bind_named_parameters.cpp
   plan_basetableref.cpp
   plan_crossproductref.cpp
