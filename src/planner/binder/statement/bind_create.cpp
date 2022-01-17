@@ -101,8 +101,9 @@ SchemaCatalogEntry *Binder::BindCreateFunctionInfo(CreateInfo &info) {
 	auto this_macro_binding = make_unique<MacroBinding>(dummy_types, dummy_names, base.name);
 	macro_binding = this_macro_binding.get();
 
-	if (!is_query)
+	if (!is_query) {
 		ExpressionBinder::QualifyColumnNames(*this, base.function->expression);
+	}
 
 	if (is_query) {
 		// nb use a Copy as node can be modified

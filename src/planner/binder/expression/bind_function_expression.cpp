@@ -25,7 +25,6 @@ BindResult ExpressionBinder::BindExpression(FunctionExpression &function, idx_t 
 	auto func = catalog.GetEntry(context, CatalogType::SCALAR_FUNCTION_ENTRY, function.schema, function.function_name,
 	                             false, error_context);
 
-
 	switch (func->type) {
 	case CatalogType::SCALAR_FUNCTION_ENTRY:
 		// scalar function

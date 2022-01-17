@@ -130,7 +130,6 @@ unique_ptr<LogicalOperator> Binder::CreatePlan(BoundQueryNode &node) {
 
 unique_ptr<BoundTableRef> Binder::Bind(TableRef &ref) {
 	unique_ptr<BoundTableRef> result;
-	unique_ptr<TableRef> sref();
 	switch (ref.type) {
 	case TableReferenceType::BASE_TABLE:
 		result = Bind((BaseTableRef &)ref);
@@ -148,16 +147,20 @@ unique_ptr<BoundTableRef> Binder::Bind(TableRef &ref) {
 		result = Bind((EmptyTableRef &)ref);
 		break;
 	case TableReferenceType::TABLE_FUNCTION: {
-		// table function now returns null_ptr if ref->function_name not in TableFunction Catalog
-		// function can modify ref so we make a copy of it here
-		auto tf_ref =ref.Copy();
-		result = Bind((TableFunctionRef &)ref);
-		//  no result from
-		if (!result)
-			// This returns a <BoundSubqueryNode> if sucessfull
-			result=Bind( (TableMacroRef &)*tf_ref);
-		}
-		break;
+
+		     auto cp_ref= ref.Copy();
+		     result = Bind((TableFunctionRef &)ref);
+
+		     if (!result) {
+			     // this a little naughty but TableFunctionRef and TableMacrRef are the same
+			     // Also  note Bind((TableMacroRef &)) return a BoundSubquery
+			     result = Bind((TableMacroRef &)*cp_ref);
+		     }
+
+
+
+			}
+	         break;
 
 	case TableReferenceType::EXPRESSION_LIST:
 		result = Bind((ExpressionListRef &)ref);
