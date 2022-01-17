@@ -5,7 +5,7 @@ opt: release
 unit: unittest
 imdb: third_party/imdb/data
 
-GENERATOR=Ninja
+GENERATOR=
 FORCE_COLOR=
 WARNINGS_AS_ERRORS=
 FORCE_WARN_UNUSED_FLAG=
@@ -117,7 +117,7 @@ release_expanded:
 	mkdir -p build/release_expanded && \
 	cd build/release_expanded && \
 	cmake $(GENERATOR) $(FORCE_COLOR) ${WARNINGS_AS_ERRORS} ${FORCE_WARN_UNUSED_FLAG} ${DISABLE_UNITY_FLAG} ${DISABLE_SANITIZER_FLAG} ${STATIC_LIBCPP} ${EXTENSIONS} -DCMAKE_BUILD_TYPE=Release ../.. && \
-	cmake --build . --config Release -- -j 8
+	cmake --build . --config Release
 
 cldebug:
 	mkdir -p build/cldebug && \
